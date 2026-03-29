@@ -1,0 +1,69 @@
+app-id: io.github.zelda64recomp.zelda64recomp
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: Zelda64Recompiled
+finish-args:
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=usb
+  - --device=dri
+  - --filesystem=home
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.llvm20
+#build-options:
+#  build-args:
+#  - --share=network
+
+modules:
+# Requirements
+  - shared-modules/SDL2/SDL2_image.json
+  - shared-modules/SDL2/SDL2_ttf.json
+
+# Main Build
+  - name: Zelda64Recompiled
+    buildsystem: simple
+    sources: 
+      - type: archive
+        url: https://github.com/Zelda64Recomp/Zelda64Recomp/archive/refs/tags/v1.2.2.tar.gz
+        sha256: cb4d815ed18ada6f54528db03f52c6c36df7a312fc41410641d6a5f11db05659
+
+      - type: git
+        url: https://github.com/N64Recomp/N64Recomp.git
+        commit: 81213c1831fab2521a6a5459c67b63437d67e253
+        dest: ./lib/N64Recomp
+    #build-options: # doesn't seem to work wih simple build
+      #- append-path: /usr/lib/sdk/llvm20/bin
+      #- prepend-ld-library-path: /usr/lib/sdk/llvm20/lib
+
+    build-commands: 
+      # Clang/LLVM
+      - mkdir -p /app/bin
+      - mkdir -p /app/lib
+      - cp -r /usr/lib/sdk/llvm20/bin/* /app/bin
+      - cp -r /usr/lib/sdk/llvm20/lib/* /app/lib  
+      #- make -C ./patches CC=clang LD=ld.lld # needs MIPS in LLVM
+      - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./lib/N64Recomp -B ./lib/N64Recomp/cmake-build
+      - cmake --build ./lib/N64Recomp/cmake-build --config Release --target N64Recomp --parallel
+      - cmake --build ./lib/N64Recomp/cmake-build --config Release --target RSPRecomp --parallel
+      - cp ./lib/N64Recomp/cmake-build/N64Recomp ./N64Recomp
+      - cp ./lib/N64Recomp/cmake-build/RSPRecomp ./RSPRecomp
+      - ./N64Recomp ./us.rev1.toml
+      - ./RSPRecomp ./aspMain.us.rev1.toml
+      - ./RSPRecomp ./njpgdspMain.us.rev1.toml
+      - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=ninja -DPATCHES_C_COMPILER=clang -DPATCHES_LD=ld.lld -DRECOMP_FLATPAK=ON -G Ninja -S . -B cmake-build
+      - cmake --build cmake-build --config Release --target Zelda64Recompiled --parallel
+      - rm -rf assets/scss
+      # Move built items
+      - mkdir -p ${FLATPAK_DEST}/bin
+      - cp cmake-build/Zelda64Recompiled ${FLATPAK_DEST}/bin/Zelda64Recompiled
+      - cp recompcontrollerdb.txt ${FLATPAK_DEST}/bin/recompcontrollerdb.txt
+      - cp -r assets ${FLATPAK_DEST}/bin/assets
+      # Icons, desktop entry, metadata
+      - install -Dm644 icons/512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png,
+      - install -Dm644 flatpak/io.github.zelda64recomp.zelda64recomp.metainfo.xml ${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml,
+      - install -Dm644 flatpak/io.github.zelda64recomp.zelda64recomp.desktop ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop
+
+  
