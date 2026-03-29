@@ -62,8 +62,8 @@ modules:
       - cp recompcontrollerdb.txt ${FLATPAK_DEST}/bin/recompcontrollerdb.txt
       - cp -r assets ${FLATPAK_DEST}/bin/assets
       # Icons, desktop entry, metadata
-      - install -Dm644 icons/512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png,
-      - install -Dm644 flatpak/io.github.zelda64recomp.zelda64recomp.metainfo.xml ${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml,
-      - install -Dm644 flatpak/io.github.zelda64recomp.zelda64recomp.desktop ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 ./icons/512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/${FLATPAK_ID}.png,
+      - install -Dm644 ./io.github.zelda64recomp.zelda64recomp.metainfo.xml ${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml,
+      - install -Dm644 ./io.github.zelda64recomp.zelda64recomp.desktop ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop
 
   
