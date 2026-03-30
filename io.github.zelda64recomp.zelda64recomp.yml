@@ -48,8 +48,8 @@ modules:
       - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S ./lib/N64Recomp -B ./lib/N64Recomp/cmake-build
       - cmake --build ./lib/N64Recomp/cmake-build --config Release --target N64Recomp --parallel
       - cmake --build ./lib/N64Recomp/cmake-build --config Release --target RSPRecomp --parallel
-      - cp ./lib/N64Recomp/cmake-build/N64Recomp ./N64Recomp
-      - cp ./lib/N64Recomp/cmake-build/RSPRecomp ./RSPRecomp
+      - cp -r ./lib/N64Recomp/cmake-build/N64Recomp ./N64Recomp
+      - cp -r ./lib/N64Recomp/cmake-build/RSPRecomp ./RSPRecomp
       - ./N64Recomp ./us.rev1.toml
       - ./RSPRecomp ./aspMain.us.rev1.toml
       - ./RSPRecomp ./njpgdspMain.us.rev1.toml
