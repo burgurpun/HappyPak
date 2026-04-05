@@ -27,9 +27,8 @@ modules:
     buildsystem: simple
     sources: 
       - type: git
-        #url: https://github.com/Zelda64Recomp/Zelda64Recomp.git
-        url: https://github.com/burgurpun/Zelda64Recomp.git # Needed to use fork, see README
-        branch: testing # Specific to fork
+        url: https://github.com/Zelda64Recomp/Zelda64Recomp.git
+        tag: v1.2.2 # Specific to fork
 
       - type: git
         url: https://github.com/N64Recomp/N64Recomp.git
@@ -41,20 +40,6 @@ modules:
       prepend-ld-library-path: /usr/lib/sdk/llvm22/lib
 
     build-commands: 
-      # Clang/LLVM testing related
-      #- mkdir -p /app/bin /app/lib/cmake /app/include
-      #- cp -r /usr/lib/sdk/llvm22/bin/* /app/bin
-      #- cp -r /usr/lib/sdk/llvm22/lib/* /app/lib  
-      - 
-      # To save on disk space, use mv instead
-      #- mv ./llvm/bin/* /app/bin/
-      #- mv ./llvm/lib/cmake/* /app/lib/cmake/
-      #- rm -r ./llvm/lib/cmake
-      #- mv ./llvm/lib/* /app/lib/
-      #- mv ./llvm/include/* /app/include/
-      #- ls /app/
-      #- ls /app/bin
-
       - clang -print-targets
 
       - echo "Building patches (mips)"
